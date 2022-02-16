@@ -1,0 +1,12 @@
+{% extends "layout.njk" %}
+
+
+{% block content %}
+  <h1>This is the list of all the platforms</h1>
+  {% for i in platforms.platforms %}
+  <p>
+    <a href="/platforms/{{platforms.platforms[loop.index0].id}}"> {{platforms.platforms[loop.index0].name}} </a>
+    <img src="{{platforms.platforms[loop.index0].logo.url}}">
+  </p>
+  {% endfor %}
+{% endblock %}

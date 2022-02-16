@@ -1,0 +1,19 @@
+{% extends "layout.njk" %}
+
+{% block content %}
+  <p>
+      {{game.name}}
+      {{game.category}}
+      plateformes :
+        {% for i in game.platforms %}
+          <a href="/platforms/{{game.platforms[loop.index0].id}}"> {{game.platforms[loop.index0].name}} </a>
+          <img src="{{game.platforms[loop.index0].logo.url}}">
+        {% endfor %}
+      cover :
+      <img src="{{game.cover.url}}">
+      screenshots:
+      {% for i in game.screenshots %}
+        <img src="{{game.screenshots[loop.index0].url}}">
+      {% endfor %}
+  </p>
+{% endblock %}

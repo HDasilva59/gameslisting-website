@@ -1,0 +1,23 @@
+{% extends "layout.njk" %}
+
+
+{% block content %}
+  <h1>This is the list of all the games</h1>
+  {% for i in games.games %}
+  <p>
+    <a href="/games/{{games.games[loop.index0].id}}"> {{games.games[loop.index0].name}} </a>
+    <img src="{{games.games[loop.index0].cover.url}}">
+  </p>
+  {% endfor %}
+  <form>
+    <input type="hidden" name="page" value="prev"/>
+    <button type="submit" action="/prev">
+      prev
+    </button>
+  </form>
+  <form>
+    <button type="submit" action="/next">
+      next
+    </button>
+  </form>
+{% endblock %}
