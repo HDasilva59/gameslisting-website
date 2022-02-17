@@ -11,10 +11,6 @@ nunjucks.configure("views", {
   express: app,
 });
 
-let pages = 1;
-
-const formParser = express.urlencoded({ extended: true });
-
 app.get("/", (req, res) => {
   res.render("homepage");
 });
@@ -46,15 +42,30 @@ app.get("/platforms/:slug", (req, res) => {
 });
 
 app.get("/games", (req, res) => {
-  pages = 1;
-  console.log(pages);
-  request("http://videogame-api.fly.dev/games", (error, body) => {
-    if (error) {
-      throw error;
+  console.log(req.query.page);
+  if (req.query.page === undefined || req.query.page === "0") {
+    request("http://videogame-api.fly.dev/games", (error, body) => {
+      if (error) {
+        throw error;
+      }
+      const games = JSON.parse(body);
+      const current = 1;
+      res.render("listofgames", { games, current });
+    });
+  } else {
+    req.query.page;
+    if (typeof req.query.page === "string") {
+      const current = parseInt(req.query.page);
+      console.log(current);
+      request(`http://videogame-api.fly.dev/games?page=${current}`, (error, body) => {
+        if (error) {
+          throw error;
+        }
+        const games = JSON.parse(body);
+        res.render("listofgames", { games, current });
+      });
     }
-    const games = JSON.parse(body);
-    res.render("listofgames", { games });
-  });
+  }
 });
 
 app.get("/games/:slug", (req, res) => {
@@ -66,40 +77,6 @@ app.get("/games/:slug", (req, res) => {
     console.log(game);
     res.render("game", { game });
   });
-});
-
-app.post("/gamespages", formParser, (req, res) => {
-  if (req.body.page === "+") {
-    pages++;
-    console.log(pages);
-    request(`http://videogame-api.fly.dev/games?page=${pages}`, (error, body) => {
-      if (error) {
-        throw error;
-      }
-      const games = JSON.parse(body);
-      res.render("listofgames", { games });
-    });
-  } else if (req.body.page === "-" && pages === 2) {
-    pages--;
-    console.log(pages);
-    request(`http://videogame-api.fly.dev/games`, (error, body) => {
-      if (error) {
-        throw error;
-      }
-      const games = JSON.parse(body);
-      res.render("listofgames", { games });
-    });
-  } else if (req.body.page === "-") {
-    pages--;
-    console.log(pages);
-    request(`http://videogame-api.fly.dev/games?page=${pages}`, (error, body) => {
-      if (error) {
-        throw error;
-      }
-      const games = JSON.parse(body);
-      res.render("listofgames", { games });
-    });
-  }
 });
 
 app.listen(3000, () => {
