@@ -15,27 +15,51 @@ app.get("/", (req, res) => {
 });
 
 app.get("/platforms", (req, res) => {
-  if (req.query.page === undefined || req.query.page === "0") {
-    request("http://videogame-api.fly.dev/platforms", (error, body) => {
-      if (error) {
-        throw error;
-      }
-      const platforms = JSON.parse(body);
-      const current = 1;
-      res.render("platforms", { platforms, current });
-    });
-  } else {
+  request("http://videogame-api.fly.dev/platforms", (error, body) => {
+    if (error) {
+      throw error;
+    }
+    const platforms = JSON.parse(body);
     if (typeof req.query.page === "string") {
       const current = parseInt(req.query.page);
-      request(`http://videogame-api.fly.dev/platforms?page=${current}`, (error, body) => {
+      if (current > Math.ceil(platforms.total / 20)) {
+        request(`http://videogame-api.fly.dev/platforms?page=${Math.ceil(platforms.total / 20)}`, (error, body) => {
+          if (error) {
+            throw error;
+          }
+          const platforms = JSON.parse(body);
+          const current = Math.ceil(platforms.total / 20);
+          res.render("platforms", { platforms, current });
+        });
+      } else if (current < 1) {
+        request(`http://videogame-api.fly.dev/platforms`, (error, body) => {
+          if (error) {
+            throw error;
+          }
+          const platforms = JSON.parse(body);
+          const current = 1;
+          res.render("platforms", { platforms, current });
+        });
+      } else {
+        request(`http://videogame-api.fly.dev/platforms?page=${current}`, (error, body) => {
+          if (error) {
+            throw error;
+          }
+          const platforms = JSON.parse(body);
+          res.render("platforms", { platforms, current });
+        });
+      }
+    } else {
+      request("http://videogame-api.fly.dev/platforms", (error, body) => {
         if (error) {
           throw error;
         }
         const platforms = JSON.parse(body);
+        const current = 1;
         res.render("platforms", { platforms, current });
       });
     }
-  }
+  });
 });
 
 app.get("/platforms/:slug", (req, res) => {
@@ -55,27 +79,51 @@ app.get("/platforms/:slug", (req, res) => {
 });
 
 app.get("/games", (req, res) => {
-  if (req.query.page === undefined || req.query.page === "0") {
-    request("http://videogame-api.fly.dev/games", (error, body) => {
-      if (error) {
-        throw error;
-      }
-      const games = JSON.parse(body);
-      const current = 1;
-      res.render("listofgames", { games, current });
-    });
-  } else {
+  request("http://videogame-api.fly.dev/games", (error, body) => {
+    if (error) {
+      throw error;
+    }
+    const games = JSON.parse(body);
     if (typeof req.query.page === "string") {
       const current = parseInt(req.query.page);
-      request(`http://videogame-api.fly.dev/games?page=${current}`, (error, body) => {
+      if (current > Math.ceil(games.total / 20)) {
+        request(`http://videogame-api.fly.dev/games?page=${Math.ceil(games.total / 20)}`, (error, body) => {
+          if (error) {
+            throw error;
+          }
+          const games = JSON.parse(body);
+          const current = Math.ceil(games.total / 20);
+          res.render("listofgames", { games, current });
+        });
+      } else if (current < 1) {
+        request(`http://videogame-api.fly.dev/games`, (error, body) => {
+          if (error) {
+            throw error;
+          }
+          const games = JSON.parse(body);
+          const current = 1;
+          res.render("listofgames", { games, current });
+        });
+      } else {
+        request(`http://videogame-api.fly.dev/games?page=${current}`, (error, body) => {
+          if (error) {
+            throw error;
+          }
+          const games = JSON.parse(body);
+          res.render("listofgames", { games, current });
+        });
+      }
+    } else {
+      request("http://videogame-api.fly.dev/games", (error, body) => {
         if (error) {
           throw error;
         }
         const games = JSON.parse(body);
+        const current = 1;
         res.render("listofgames", { games, current });
       });
     }
-  }
+  });
 });
 
 app.get("/games/:slug", (req, res) => {
