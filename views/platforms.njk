@@ -9,4 +9,6 @@
     <img src="{{platforms.platforms[loop.index0].logo.url}}">
   </p>
   {% endfor %}
+  <button><a href="/platforms?page={{ current - 1 }}">previous</a></button>
+  <button><a href="/platforms?page={{ current + 1 }}">next</a></button>
 {% endblock %}

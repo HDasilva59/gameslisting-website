@@ -3,7 +3,6 @@ import nunjucks from "nunjucks";
 import request from "@fewlines-education/request";
 
 const app = express();
-
 app.set("view engine", "njk");
 
 nunjucks.configure("views", {
@@ -16,13 +15,27 @@ app.get("/", (req, res) => {
 });
 
 app.get("/platforms", (req, res) => {
-  request("http://videogame-api.fly.dev/platforms", (error, body) => {
-    if (error) {
-      throw error;
+  if (req.query.page === undefined || req.query.page === "0") {
+    request("http://videogame-api.fly.dev/platforms", (error, body) => {
+      if (error) {
+        throw error;
+      }
+      const platforms = JSON.parse(body);
+      const current = 1;
+      res.render("platforms", { platforms, current });
+    });
+  } else {
+    if (typeof req.query.page === "string") {
+      const current = parseInt(req.query.page);
+      request(`http://videogame-api.fly.dev/platforms?page=${current}`, (error, body) => {
+        if (error) {
+          throw error;
+        }
+        const platforms = JSON.parse(body);
+        res.render("platforms", { platforms, current });
+      });
     }
-    const platforms = JSON.parse(body);
-    res.render("platforms", { platforms });
-  });
+  }
 });
 
 app.get("/platforms/:slug", (req, res) => {
@@ -42,7 +55,6 @@ app.get("/platforms/:slug", (req, res) => {
 });
 
 app.get("/games", (req, res) => {
-  console.log(req.query.page);
   if (req.query.page === undefined || req.query.page === "0") {
     request("http://videogame-api.fly.dev/games", (error, body) => {
       if (error) {
@@ -53,10 +65,8 @@ app.get("/games", (req, res) => {
       res.render("listofgames", { games, current });
     });
   } else {
-    req.query.page;
     if (typeof req.query.page === "string") {
       const current = parseInt(req.query.page);
-      console.log(current);
       request(`http://videogame-api.fly.dev/games?page=${current}`, (error, body) => {
         if (error) {
           throw error;
@@ -74,7 +84,6 @@ app.get("/games/:slug", (req, res) => {
       throw error;
     }
     const game = JSON.parse(body);
-    console.log(game);
     res.render("game", { game });
   });
 });
