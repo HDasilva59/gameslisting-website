@@ -9,14 +9,15 @@
     <img src="{{games.games[loop.index0].cover.url}}">
   </p>
   {% endfor %}
-  <form>
-    <input type="hidden" name="page" value="prev"/>
-    <button type="submit" action="/prev">
+  <form method="post" action="/gamespages">
+    <input type="hidden" name="page" value="-"/>
+    <button type="submit">
       prev
-    </button>
+    </button type="submit">
   </form>
-  <form>
-    <button type="submit" action="/next">
+  <form method="post" action="/gamespages">
+    <input type="hidden" name="page" value="+"/>
+    <button type="submit">
       next
     </button>
   </form>

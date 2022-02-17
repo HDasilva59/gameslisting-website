@@ -11,6 +11,10 @@ nunjucks.configure("views", {
   express: app,
 });
 
+let pages = 1;
+
+const formParser = express.urlencoded({ extended: true });
+
 app.get("/", (req, res) => {
   res.render("homepage");
 });
@@ -42,6 +46,8 @@ app.get("/platforms/:slug", (req, res) => {
 });
 
 app.get("/games", (req, res) => {
+  pages = 1;
+  console.log(pages);
   request("http://videogame-api.fly.dev/games", (error, body) => {
     if (error) {
       throw error;
@@ -62,7 +68,39 @@ app.get("/games/:slug", (req, res) => {
   });
 });
 
-//app.get("/action", (req, res) => {});
+app.post("/gamespages", formParser, (req, res) => {
+  if (req.body.page === "+") {
+    pages++;
+    console.log(pages);
+    request(`http://videogame-api.fly.dev/games?page=${pages}`, (error, body) => {
+      if (error) {
+        throw error;
+      }
+      const games = JSON.parse(body);
+      res.render("listofgames", { games });
+    });
+  } else if (req.body.page === "-" && pages === 2) {
+    pages--;
+    console.log(pages);
+    request(`http://videogame-api.fly.dev/games`, (error, body) => {
+      if (error) {
+        throw error;
+      }
+      const games = JSON.parse(body);
+      res.render("listofgames", { games });
+    });
+  } else if (req.body.page === "-") {
+    pages--;
+    console.log(pages);
+    request(`http://videogame-api.fly.dev/games?page=${pages}`, (error, body) => {
+      if (error) {
+        throw error;
+      }
+      const games = JSON.parse(body);
+      res.render("listofgames", { games });
+    });
+  }
+});
 
 app.listen(3000, () => {
   console.log("Server started on http://localhost:3000");
