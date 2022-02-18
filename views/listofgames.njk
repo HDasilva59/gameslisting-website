@@ -1,5 +1,10 @@
 {% extends "layout.njk" %}
 
+{% block content %}
+  {% if isAtTheEnd %}
+  <link rel="stylesheet" href="button.css">
+  {% endif %}
+{% endblock %}
 
 {% block content %}
   <h1>This is the list of all the games</h1>
@@ -10,5 +15,5 @@
   </p>
   {% endfor %}
   <button><a href="/games?page={{ current - 1 }}">previous</a></button>
-  <button><a href="/games?page={{ current + 1 }}">next</a></button>
+  <button><a href="/games?page={{ current + 1 }}" id="next-button">next</a></button>
 {% endblock %}

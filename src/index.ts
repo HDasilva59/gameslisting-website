@@ -5,6 +5,8 @@ import request from "@fewlines-education/request";
 const app = express();
 app.set("view engine", "njk");
 
+app.use(express.static("public"));
+
 nunjucks.configure("views", {
   autoescape: true,
   express: app,
@@ -15,51 +17,41 @@ app.get("/", (req, res) => {
 });
 
 app.get("/platforms", (req, res) => {
-  request("http://videogame-api.fly.dev/platforms", (error, body) => {
-    if (error) {
-      throw error;
-    }
-    const platforms = JSON.parse(body);
-    if (typeof req.query.page === "string") {
-      const current = parseInt(req.query.page);
-      if (current > Math.ceil(platforms.total / 20)) {
-        request(`http://videogame-api.fly.dev/platforms?page=${Math.ceil(platforms.total / 20)}`, (error, body) => {
-          if (error) {
-            throw error;
-          }
-          const platforms = JSON.parse(body);
-          const current = Math.ceil(platforms.total / 20);
-          res.render("platforms", { platforms, current });
-        });
-      } else if (current < 1) {
-        request(`http://videogame-api.fly.dev/platforms`, (error, body) => {
-          if (error) {
-            throw error;
-          }
-          const platforms = JSON.parse(body);
-          const current = 1;
-          res.render("platforms", { platforms, current });
-        });
-      } else {
-        request(`http://videogame-api.fly.dev/platforms?page=${current}`, (error, body) => {
-          if (error) {
-            throw error;
-          }
-          const platforms = JSON.parse(body);
-          res.render("platforms", { platforms, current });
-        });
-      }
-    } else {
-      request("http://videogame-api.fly.dev/platforms", (error, body) => {
+  if (typeof req.query.page === "string") {
+    const current = parseInt(req.query.page);
+    if (current < 1 || isNaN(current)) {
+      request(`http://videogame-api.fly.dev/platforms`, (error, body) => {
         if (error) {
           throw error;
         }
         const platforms = JSON.parse(body);
         const current = 1;
-        res.render("platforms", { platforms, current });
+        const totalpages = Math.ceil(platforms.total / 20);
+        res.render("platforms", { platforms, current, totalpages });
+      });
+    } else {
+      request(`http://videogame-api.fly.dev/platforms?page=${current}`, (error, body) => {
+        if (error) {
+          throw error;
+        }
+        const platforms = JSON.parse(body);
+        const totalpages = Math.ceil(platforms.total / 20);
+        const isAtTheEnd = lastPage(current, totalpages);
+        res.render("platforms", { platforms, current, totalpages, isAtTheEnd });
       });
     }
-  });
+  } else {
+    request(`http://videogame-api.fly.dev/platforms`, (error, body) => {
+      if (error) {
+        throw error;
+      }
+      const platforms = JSON.parse(body);
+      const current = 1;
+      const totalpages = Math.ceil(platforms.total / 20);
+      const isAtTheEnd = lastPage(current, totalpages);
+      res.render("platforms", { platforms, current, totalpages, isAtTheEnd });
+    });
+  }
 });
 
 app.get("/platforms/:slug", (req, res) => {
@@ -79,51 +71,42 @@ app.get("/platforms/:slug", (req, res) => {
 });
 
 app.get("/games", (req, res) => {
-  request("http://videogame-api.fly.dev/games", (error, body) => {
-    if (error) {
-      throw error;
-    }
-    const games = JSON.parse(body);
-    if (typeof req.query.page === "string") {
-      const current = parseInt(req.query.page);
-      if (current > Math.ceil(games.total / 20)) {
-        request(`http://videogame-api.fly.dev/games?page=${Math.ceil(games.total / 20)}`, (error, body) => {
-          if (error) {
-            throw error;
-          }
-          const games = JSON.parse(body);
-          const current = Math.ceil(games.total / 20);
-          res.render("listofgames", { games, current });
-        });
-      } else if (current < 1) {
-        request(`http://videogame-api.fly.dev/games`, (error, body) => {
-          if (error) {
-            throw error;
-          }
-          const games = JSON.parse(body);
-          const current = 1;
-          res.render("listofgames", { games, current });
-        });
-      } else {
-        request(`http://videogame-api.fly.dev/games?page=${current}`, (error, body) => {
-          if (error) {
-            throw error;
-          }
-          const games = JSON.parse(body);
-          res.render("listofgames", { games, current });
-        });
-      }
-    } else {
-      request("http://videogame-api.fly.dev/games", (error, body) => {
+  if (typeof req.query.page === "string") {
+    const current = parseInt(req.query.page);
+    if (current < 1 || isNaN(current)) {
+      request(`http://videogame-api.fly.dev/games`, (error, body) => {
         if (error) {
           throw error;
         }
         const games = JSON.parse(body);
         const current = 1;
-        res.render("listofgames", { games, current });
+        const totalpages = Math.ceil(games.total / 20);
+        const isAtTheEnd = lastPage(current, totalpages);
+        res.render("listofgames", { games, current, totalpages, isAtTheEnd });
+      });
+    } else {
+      request(`http://videogame-api.fly.dev/games?page=${current}`, (error, body) => {
+        if (error) {
+          throw error;
+        }
+        const games = JSON.parse(body);
+        const totalpages = Math.ceil(games.total / 20);
+        const isAtTheEnd = lastPage(current, totalpages);
+        res.render("listofgames", { games, current, totalpages, isAtTheEnd });
       });
     }
-  });
+  } else {
+    request(`http://videogame-api.fly.dev/games`, (error, body) => {
+      if (error) {
+        throw error;
+      }
+      const games = JSON.parse(body);
+      const current = 1;
+      const totalpages = Math.ceil(games.total / 20);
+      const isAtTheEnd = lastPage(current, totalpages);
+      res.render("listofgames", { games, current, totalpages, isAtTheEnd });
+    });
+  }
 });
 
 app.get("/games/:slug", (req, res) => {
@@ -135,6 +118,14 @@ app.get("/games/:slug", (req, res) => {
     res.render("game", { game });
   });
 });
+
+function lastPage(current: number, totalpages: number): boolean {
+  if (current === totalpages) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 app.listen(3000, () => {
   console.log("Server started on http://localhost:3000");
