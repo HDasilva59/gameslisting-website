@@ -7,14 +7,23 @@
 {% endblock %}
 
 {% block content %}
-  <h1>This is the list of all the platforms</h1>
+  <div class="row row-cols-2 row-cols-md-4 g-5">
   {% for i in platforms.platforms %}
-  <p>
-    <a href="/platforms/{{platforms.platforms[loop.index0].id}}"> {{platforms.platforms[loop.index0].name}} </a>
-    <img src="{{platforms.platforms[loop.index0].logo.url}}">
-  </p>
+  <div class="col">
+    <div class="card h-100">
+      <a href="/platforms/{{platforms.platforms[loop.index0].id}}" class="link-dark">
+        <img src="{{platforms.platforms[loop.index0].logo.url}}" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">{{platforms.platforms[loop.index0].name}}</h5>
+          <p class="card-text">{{platforms.platforms[loop.index0].category}}</p>
+        </div>
+      </a>
+    </div>
+  </div>
   {% endfor %}
-  <button><a href="/platforms?page={{ current - 1 }}">previous</a></button>
-
-  <button><a href="/platforms?page={{ current + 1 }}" id="next-button">next</a></button>
+  </div>
+   <div>
+  <button type="button" class="btn btn-secondary float-start"><a href="/platforms?page={{ current - 1 }}" class="link-light" >previous</a></button>
+  <button type="button" class="btn btn-secondary float-end"><a href="/platforms?page={{ current + 1 }}" id="next-button" class="link-light" >next</a></button>
+</div>
 {% endblock %}

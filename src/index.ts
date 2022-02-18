@@ -104,6 +104,7 @@ app.get("/games", (req, res) => {
       const current = 1;
       const totalpages = Math.ceil(games.total / 20);
       const isAtTheEnd = lastPage(current, totalpages);
+      console.log(games);
       res.render("listofgames", { games, current, totalpages, isAtTheEnd });
     });
   }
