@@ -2,18 +2,39 @@
 
 {% block content %}
   <p>
-      {{game.name}}
-      {{game.category}}
-      plateformes :
-        {% for i in game.platforms %}
+      <h3>Name :</h3><h4>{{game.name}}</h4>
+      <h4>category:</h4><h5>{{game.category}}</h5>
+      <h6>cover</h6> :
+      <img src="{{game.cover.url}}">
+      <p>
+  <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#screenshots" aria-expanded="false" aria-controls="collapseWidthExample">
+    platforms
+  </button>
+</p>
+<div style="min-height: 120px;">
+  <div class="collapse collapse-horizontal" id="screenshots">
+    <div class="card card-body" style="width: 90%;">
+    {% for i in game.platforms %}
           <a href="/platforms/{{game.platforms[loop.index0].id}}"> {{game.platforms[loop.index0].name}} </a>
           <img src="{{game.platforms[loop.index0].logo.url}}">
         {% endfor %}
-      cover :
-      <img src="{{game.cover.url}}">
-      screenshots:
-      {% for i in game.screenshots %}
+    </div>
+  </div>
+</div>
+  </p>
+  <p>
+  <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+    screenshots
+  </button>
+</p>
+<div style="min-height: 120px;">
+  <div class="collapse collapse-horizontal" id="collapseWidthExample">
+    <div class="card card-body" style="width: 90%;">
+    {% for i in game.screenshots %}
         <img src="{{game.screenshots[loop.index0].url}}">
       {% endfor %}
+    </div>
+  </div>
+</div>
   </p>
 {% endblock %}
