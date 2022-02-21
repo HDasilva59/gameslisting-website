@@ -8,14 +8,15 @@
 
 {% block content %}
   <div class="row row-cols-2 row-cols-md-4 g-5">
+  <h1>rendered?</h1>
   {% for i in games.games %}
   <div class="col">
-    <div class="card h-100">
-      <a href="/games/{{games.games[loop.index0].id}}" class="link-dark">
-        <img src="{{games.games[loop.index0].cover.url}}" class="card-img-top" alt="...">
+    <div class="card h-100 shadow p-3 mb-5 bg-body rounded" >
+      <a href="/games/{{result.games[loop.index0].id}}" class="link-dark">
+        <img src="{{result.games[loop.index0].cover.url}}" class="card-img-top" alt="...">
         <div class="card-body">
-          <h5 class="card-title">{{games.games[loop.index0].name}}</h5>
-          <p class="card-text">{{games.games[loop.index0].category}}</p>
+          <h5 class="card-title">{{result.games[loop.index0].name}}</h5>
+          <p class="card-text">{{result.games[loop.index0].category}}</p>
         </div>
       </a>
     </div>
@@ -24,6 +25,6 @@
   </div>
    <div>
   <button type="button" class="btn btn-secondary float-start"><a href="/games?page={{ current - 1 }}" class="link-light" >previous</a></button>
-  <button type="button" class="btn btn-secondary float-end"><a href="/games?page={{ current + 1 }}" id="next-button" class="link-light" >next</a></button>
+  <button type="button" class="btn btn-secondary float-end" id="next-button"><a href="/games?page={{ current + 1 }}" class="link-light" >next</a></button>
 </div>
 {% endblock %}
